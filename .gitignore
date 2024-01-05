@@ -1,0 +1,39 @@
+# Ignore node modules in both client and server directories
+client/node_modules
+server/node_modules
+
+# Ignore dist directory in client
+client/dist
+
+# Ignore local env files in client
+client/.env.local
+client/.env.*.local
+
+# Ignore log files in both client and server
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+server/pnpm-debug.log*
+
+# Ignore editor directories and files in both client and server
+client/.idea
+client/.vscode
+client/*.suo
+client/*.ntvs*
+client/*.njsproj
+client/*.sln
+client/*.sw?
+server/.idea
+server/.vscode
+server/*.suo
+server/*.ntvs*
+server/*.njsproj
+server/*.sln
+server/*.sw?
+
+# Ignore .DS_Store
+.DS_Store
