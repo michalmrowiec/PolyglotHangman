@@ -1,8 +1,7 @@
 <template>
   <div>
-    <MenuApp  @wordReceived="updateWord"/>
-    
-    <GameApp v-show="myWord" :inputWord="myWord"/>
+    <MenuApp v-show="!game" @wordReceivedAndUsername="updateWordAndUsername"/>
+    <GameApp v-show="myWord" :inputWord="myWord" :inputUsername="myUsername" @isEnd="gameEnd"/>
   </div>
 </template>
 
@@ -17,12 +16,23 @@ export default {
   },
   data() {
     return {
-      myWord: ""
+      myWord: "",
+      myUsername: "s",
+      game: false
     }
   },
   methods: {
-    async updateWord(newWord) {
+    async updateWordAndUsername(newWord, newUsername) {
       this.myWord = newWord;
+      this.myUsername = newUsername;
+      this.game = true;
+      console.log(newUsername)
+    },
+
+    async gameEnd(isEnd) {
+      if(isEnd) {
+        this.game = false;
+      }
     }
   }
 }
