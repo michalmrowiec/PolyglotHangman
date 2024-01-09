@@ -1,37 +1,51 @@
 <template>
   <div>
-    <p>{{ minutes }} : {{ seconds }} : {{ milliseconds }}</p>
-    <p>cover: {{ coveredWord.join(' ') }}</p>
-    <p>lett: {{ letters.join(' ') }}</p>
+    <div class="center-card">
+      <div class="card m-auto">
+        <div class="card-header">
+          <h5>Polyglot Hangman Menu</h5>
+        </div>
+        <div class="card-body">
+          <p>{{ minutes }} : {{ seconds }} : {{ milliseconds }}</p>
+          <p>cover: {{ coveredWord.join(" ") }}</p>
+          <p>lett: {{ letters.join(" ") }}</p>
 
-    <p>Attempts left: {{ attempts }}</p>
+          <p>Attempts left: {{ attempts }}</p>
+          <div v-if="!stopGame">
+            <input
+              v-model="letter"
+              maxlength="1"
+              placeholder="Enter a letter..."
+              v-focus
+              @keyup.enter="checkLetter"
+            />
+            <button @click="checkLetter" type="submit" class="btn btn-success">
+              Sprawdź
+            </button>
+          </div>
 
-      <div v-if="!stopGame">
-      <input v-model="letter" maxlength="1" placeholder="Enter a letter..." v-focus @keyup.enter="checkLetter"/>
-      <button @click="checkLetter" type="submit">Sprawdź</button>
+          <div v-else>
+            <p v-if="isWin">You Won!</p>
+            <p v-else>You Lose!</p>
+
+            <table>
+              <tr v-for="(item, index) in scoreBoard" :key="index">
+                <td>{{ item.user }}</td>
+                <td>{{ item.time }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <p v-show="alert">{{ alert }}</p>
+        </div>
+      </div>
     </div>
-
-    <div v-else>
-      <p v-if="isWin">You Won!</p>
-      <p v-else>You Lose!</p>
-
-      <table>
-        <tr v-for="(item, index) in scoreBoard" :key="index">
-          <td>{{ item.user }}</td>
-          <td>{{ item.time }}</td>
-        </tr>
-      </table>
-
-    </div>
-
-    <p v-show="alert">{{ alert }}</p>
-
   </div>
 </template>
 
 <script>
 export default {
-  props: ['inputWord', 'inputUsername'],
+  props: ["inputWord", "inputUsername"],
   data() {
     return {
       word: "",
@@ -49,8 +63,8 @@ export default {
       minutes: 0,
       intervalId: null,
       isBestScore: false,
-      scoreBoard: []
-    }
+      scoreBoard: [],
+    };
   },
   watch: {
     inputWord(newVal) {
@@ -63,7 +77,7 @@ export default {
     },
     inputUsername(newVal) {
       this.username = newVal;
-    }
+    },
   },
   methods: {
     coverWord() {
@@ -75,43 +89,46 @@ export default {
     },
 
     checkLetter() {
-      if(!this.timeStart) {
+      if (!this.timeStart) {
         this.timeStart = true;
         this.startTimer();
       }
       this.alert = "";
-      if(this.word.includes(this.letter) && !this.coveredWord.includes(this.letter)) {
+      if (
+        this.word.includes(this.letter) &&
+        !this.coveredWord.includes(this.letter)
+      ) {
         for (let i = 0; i < this.word.length; i++) {
-          if(this.word[i] == this.letter) {
+          if (this.word[i] == this.letter) {
             this.coveredWord[i] = this.letter;
           }
         }
-      }
-      else if(this.letters.includes(this.letter) || this.coveredWord.includes(this.letter)) {
-        this.alert = this.letter + " is arleady entered"
-      }
-      else {
+      } else if (
+        this.letters.includes(this.letter) ||
+        this.coveredWord.includes(this.letter)
+      ) {
+        this.alert = this.letter + " is arleady entered";
+      } else {
         this.letters.push(this.letter);
         this.attempts--;
       }
 
       this.letter = "";
-      
+
       this.checkWin();
     },
 
     checkWin() {
-      if(this.word === this.coveredWord.join("")) {
+      if (this.word === this.coveredWord.join("")) {
         this.stopTimer();
         this.getScores();
-        console.log('is win.');
+        console.log("is win.");
         this.stopGame = true;
         this.isWin = true;
-      }
-      else if(this.attempts == 0) {
+      } else if (this.attempts == 0) {
         this.stopTimer();
         this.getScores();
-        console.log('is lose.');
+        console.log("is lose.");
         this.stopGame = true;
         this.isWin = false;
         for (let i = 0; i < this.word.length; i++) {
@@ -122,19 +139,24 @@ export default {
 
     async getScores() {
       let requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user: this.username, word: this.word, time: (this.minutes * 60000 + this.seconds * 1000 + this.milliseconds) })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: this.username,
+          word: this.word,
+          time: this.minutes * 60000 + this.seconds * 1000 + this.milliseconds,
+        }),
       };
 
-      fetch('http://localhost:3000/score', requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        this.scoreBoard = data.scores;
-        this.isBestScore = data.isBestScore;});
+      fetch("http://localhost:3000/score", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          this.scoreBoard = data.scores;
+          this.isBestScore = data.isBestScore;
+        });
 
-        this.$emit('isEnd', true);
+      this.$emit("isEnd", true);
     },
 
     startTimer() {
@@ -159,24 +181,24 @@ export default {
       this.minutes = 0;
       this.seconds = 0;
       this.milliseconds = 0;
-    }
+    },
   },
   directives: {
     focus: {
       inserted: function (el) {
         el.focus();
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 </script>
 
 <style scoped>
-button {
-  width: 100px;
-  border: 1px;
-  border-radius: 2px;
-  background-color: rgb(35, 196, 236);
+.center-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 10%;
+  height: 100vh;
 }
-
 </style>
