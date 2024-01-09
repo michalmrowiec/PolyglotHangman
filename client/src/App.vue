@@ -1,12 +1,13 @@
 <template>
   <div>
     <MenuApp
-      class="menu-app"
-      v-show="!game"
+      class="center-card"
+      v-show="menuActive"
       @wordReceivedAndUsername="updateWordAndUsername"
     />
     <GameApp
-      v-show="myWord"
+      class="center-card"
+      v-show="!menuActive"
       :inputWord="myWord"
       :inputUsername="myUsername"
       @isEnd="gameEnd"
@@ -27,20 +28,19 @@ export default {
     return {
       myWord: "",
       myUsername: "s",
-      game: false,
+      menuActive: true,
     };
   },
   methods: {
     async updateWordAndUsername(newWord, newUsername) {
       this.myWord = newWord;
       this.myUsername = newUsername;
-      this.game = true;
-      console.log(newUsername);
+      this.menuActive = false;
     },
 
     async gameEnd(isEnd) {
       if (isEnd) {
-        this.game = false;
+        this.menuActive = true;
       }
     },
   },
@@ -48,11 +48,11 @@ export default {
 </script>
 
 <style scoped>
-.menu-app {
+.center-card {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 10%;
+  /* padding-bottom: 10%; */
   height: 100vh;
 }
 </style>

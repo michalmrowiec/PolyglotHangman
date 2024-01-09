@@ -23,6 +23,8 @@
             v-model="username"
             placeholder="Nickname"
             class="form-control"
+            v-focus
+            @keyup.enter="fetchData"
           />
           <button class="btn btn-primary w-100 mt-3" @click="fetchData">
             Play
@@ -56,8 +58,8 @@ export default {
 </script>
 
 <style scoped>
-.card {
+/* .card {
   background-color: rgba(104, 184, 104, 0.726);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+} */
 </style>

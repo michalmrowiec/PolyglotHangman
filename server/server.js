@@ -34,24 +34,22 @@ function getWord(language, difficulty) {
 }
 
 function saveScore(user, word, time) {
-  // Dodaj nowy wynik do tablicy wyników
+  if (user.length === 0) return;
+
   database.scores.push({ user: user, word: word, time: time });
 
-  // Zapisz zmienioną bazę danych do pliku
   fs.writeFileSync("database.json", JSON.stringify(database));
 }
 
 function checkBestScore(user, word, time) {
-  // Znajdź słowo w bazie danych
   let wordEntry = database.words.find((entry) => entry.word === word);
 
-  // Sprawdź, czy nowy wynik jest lepszy od aktualnego najlepszego wyniku
+  console.log(wordEntry);
+
   if (wordEntry.bestScore.time === 0 || wordEntry.bestScore.time > time) {
-    // Jeśli tak, zaktualizuj najlepszy wynik
     wordEntry.bestScore.nickname = user;
     wordEntry.bestScore.time = time;
 
-    // Zapisz zmienioną bazę danych do pliku
     fs.writeFileSync("database.json", JSON.stringify(database));
     return true;
   }
@@ -59,7 +57,9 @@ function checkBestScore(user, word, time) {
 }
 
 function getOverall(word) {
-  let scores = database.scores.filter((score) => score.word === word);
+  let scores = database.scores
+    .filter((score) => score.word === word)
+    .slice(0, 10);
 
   scores.sort((a, b) => a.time - b.time);
 

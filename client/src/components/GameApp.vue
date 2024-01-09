@@ -3,40 +3,113 @@
     <div class="center-card">
       <div class="card m-auto">
         <div class="card-header">
-          <h5>Polyglot Hangman Menu</h5>
+          <h5>Polyglot Hangman Game</h5>
         </div>
         <div class="card-body">
-          <p>{{ minutes }} : {{ seconds }} : {{ milliseconds }}</p>
-          <p>cover: {{ coveredWord.join(" ") }}</p>
-          <p>lett: {{ letters.join(" ") }}</p>
-
-          <p>Attempts left: {{ attempts }}</p>
-          <div v-if="!stopGame">
-            <input
-              v-model="letter"
-              maxlength="1"
-              placeholder="Enter a letter..."
-              v-focus
-              @keyup.enter="checkLetter"
-            />
-            <button @click="checkLetter" type="submit" class="btn btn-success">
-              Sprawdź
-            </button>
+          <div class="text-center">
+            <div style="font-size: 30px">
+              ⏱️ {{ minutes }} : {{ seconds.toString().padStart(2, "0") }} :
+              {{ milliseconds.toString().padStart(2, "0") }}
+            </div>
+            <div class="mt-2" style="font-size: 20px">
+              Attempts left: <b>{{ attempts }}</b>
+            </div>
+            <div style="font-size: 20px">
+              Wrong letters: <b>{{ letters.join(" ") }}</b>
+            </div>
+            <div
+              class="mt-3 p-2 border border-secondary rounded d-inline-block w-100"
+            >
+              <p class="fs-5 mb-2">👇<b> Guess the word </b>👇</p>
+              <p class="display-4 px-3">{{ coveredWord.join(" ") }}</p>
+            </div>
           </div>
 
-          <div v-else>
-            <p v-if="isWin">You Won!</p>
-            <p v-else>You Lose!</p>
+          <div v-if="!stopGame" class="d-flex mt-4">
+            <div class="input-group">
+              <input
+                v-focus
+                type="text"
+                v-model="letter"
+                maxlength="1"
+                placeholder="Enter a letter..."
+                @keyup.enter="checkLetter"
+                class="form-control"
+              />
 
-            <table>
-              <tr v-for="(item, index) in scoreBoard" :key="index">
-                <td>{{ item.user }}</td>
-                <td>{{ item.time }}</td>
-              </tr>
+              <button
+                class="btn btn-success"
+                @click="checkLetter"
+                v-show="!stopGame"
+                type="submit"
+              >
+                Check
+              </button>
+            </div>
+          </div>
+
+          <div v-if="!stopGame" class="d-flex">
+            <div v-show="alert" style="color: red" class="mt-1 mx-auto">
+              <b>{{ alert }}</b> is arleady entered
+            </div>
+          </div>
+
+          <div v-else class="mt-3">
+            <div v-if="isWin">
+              <div
+                class="alert alert-success text-center display-6"
+                role="alert"
+              >
+                🏆 <b>You Won!</b> 👏
+              </div>
+            </div>
+            <div v-else>
+              <div
+                class="alert alert-danger text-center display-6"
+                role="alert"
+              >
+                😿 <b>You Lose!</b> 😿
+              </div>
+            </div>
+
+            <button
+              @click="goToMenu"
+              type="submit"
+              class="btn btn-outline-primary w-100"
+            >
+              Play again
+            </button>
+
+            <table class="table mt-1">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Player</th>
+                  <th scope="col">Time</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in scoreBoard" :key="index">
+                  <th scope="row">{{ index + 1 }}</th>
+                  <td>{{ item.user }}</td>
+                  <td>
+                    {{ Math.floor(item.time / 60000) }} :
+                    {{
+                      Math.floor((item.time % 60000) / 1000)
+                        .toString()
+                        .padStart(2, "0")
+                    }}
+                    : {{ (item.time % 1000).toString().padStart(2, "0") }}
+                  </td>
+                  <td v-if="index === 0">🥇</td>
+                  <td v-else-if="index === 1">🥈</td>
+                  <td v-else-if="index === 2">🥉</td>
+                  <td v-else></td>
+                </tr>
+              </tbody>
             </table>
           </div>
-
-          <p v-show="alert">{{ alert }}</p>
         </div>
       </div>
     </div>
@@ -107,7 +180,7 @@ export default {
         this.letters.includes(this.letter) ||
         this.coveredWord.includes(this.letter)
       ) {
-        this.alert = this.letter + " is arleady entered";
+        this.alert = this.letter;
       } else {
         this.letters.push(this.letter);
         this.attempts--;
@@ -155,8 +228,6 @@ export default {
           this.scoreBoard = data.scores;
           this.isBestScore = data.isBestScore;
         });
-
-      this.$emit("isEnd", true);
     },
 
     startTimer() {
@@ -182,23 +253,11 @@ export default {
       this.seconds = 0;
       this.milliseconds = 0;
     },
-  },
-  directives: {
-    focus: {
-      inserted: function (el) {
-        el.focus();
-      },
+    goToMenu() {
+      this.$emit("isEnd", true);
     },
   },
 };
 </script>
 
-<style scoped>
-.center-card {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 10%;
-  height: 100vh;
-}
-</style>
+<style scoped></style>
