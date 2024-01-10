@@ -7,14 +7,16 @@
       <div class="card-body">
         <div>
           <select v-model="language" class="form-select">
-            <option value="en">Angielski</option>
-            <option value="pl">Polski</option>
+            <option value="en">English</option>
+            <option value="pl">Polish</option>
+            <option value="es">Spanish</option>
+            <option value="it">Italian</option>
           </select>
 
           <select v-model="difficulty" class="form-select mt-3">
-            <option value="easy">Łatwy</option>
-            <option value="medium">Średni</option>
-            <option value="hard">Trudny</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
           </select>
         </div>
 
@@ -24,6 +26,7 @@
             placeholder="Nickname"
             class="form-control"
             v-focus
+            maxlength="20"
             @keyup.enter="fetchData"
           />
           <button class="btn btn-primary w-100 mt-3" @click="fetchData">
@@ -51,7 +54,13 @@ export default {
         `http://localhost:3000/word?language=${this.language}&difficulty=${this.difficulty}`
       );
       const data = await response.json();
-      this.$emit("wordReceivedAndUsername", data.word, this.username);
+      this.$emit(
+        "gameParams",
+        data.word,
+        this.username,
+        data.language,
+        this.difficulty
+      );
     },
   },
 };

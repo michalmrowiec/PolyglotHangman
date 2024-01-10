@@ -11,12 +11,25 @@ let database = JSON.parse(fs.readFileSync("database.json", "utf8"));
 
 app.get("/word", (req, res) => {
   let word = getWord(req.query.language, req.query.difficulty);
-  res.send(word);
+  let language = database.languages.find(
+    (l) => l.language === req.query.language
+  );
+  console.log(language);
+  res.send({ word: word.word, language: language.full });
 });
 
 app.post("/score", (req, res) => {
-  saveScore(req.body.user, req.body.word, req.body.time);
-  let isBestScore = checkBestScore(req.body.user, req.body.word, req.body.time);
+  console.log("body");
+  console.log(req.body);
+
+  let isBestScore;
+
+  if (req.body.user != "") {
+    console.log("req.body.user ==  - is true");
+    saveScore(req.body.user, req.body.word, req.body.time);
+    isBestScore = checkBestScore(req.body.user, req.body.word, req.body.time);
+  }
+
   let scores = getOverall(req.body.word);
 
   res.send({ scores: scores, isBestScore: isBestScore });
@@ -42,9 +55,9 @@ function saveScore(user, word, time) {
 }
 
 function checkBestScore(user, word, time) {
+  console.log("check best score=============");
   let wordEntry = database.words.find((entry) => entry.word === word);
-
-  console.log(wordEntry);
+  console.log("word entry: " + wordEntry);
 
   if (wordEntry.bestScore.time === 0 || wordEntry.bestScore.time > time) {
     wordEntry.bestScore.nickname = user;
@@ -66,4 +79,4 @@ function getOverall(word) {
   return scores;
 }
 
-app.listen(3000, () => console.log("Aplikacja działa na localhost:3000"));
+app.listen(3000, () => console.log("A  App running at  http://localhost:3000"));

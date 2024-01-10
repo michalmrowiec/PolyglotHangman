@@ -12,7 +12,12 @@
               {{ milliseconds.toString().padStart(2, "0") }}
             </div>
             <div class="mt-2" style="font-size: 20px">
-              Attempts left: <b>{{ attempts }}</b>
+              Attempts left: <b v-if="attempts > 5">{{ attempts }}</b
+              ><b
+                v-else-if="attempts <= 5 && attempts > 3"
+                style="color: rgb(228, 228, 19)"
+                >{{ attempts }}</b
+              ><b v-else style="color: red">{{ attempts }}</b>
             </div>
             <div style="font-size: 20px">
               Wrong letters: <b>{{ letters.join(" ") }}</b>
@@ -20,7 +25,10 @@
             <div
               class="mt-3 p-2 border border-secondary rounded d-inline-block w-100"
             >
-              <p class="fs-5 mb-2">👇<b> Guess the word </b>👇</p>
+              <p class="fs-5 mb-0">👇<b> Guess the word </b>👇</p>
+              <p class="m-0 p-0 mb-2" style="font-size: small">
+                {{ language }} - {{ difficulty }}
+              </p>
               <p class="display-4 px-3">{{ coveredWord.join(" ") }}</p>
             </div>
           </div>
@@ -118,7 +126,7 @@
 
 <script>
 export default {
-  props: ["inputWord", "inputUsername"],
+  props: ["inputWord", "inputUsername", "inputLanguage", "inputDifficulty"],
   data() {
     return {
       word: "",
@@ -137,6 +145,8 @@ export default {
       intervalId: null,
       isBestScore: false,
       scoreBoard: [],
+      language: "",
+      difficulty: "",
     };
   },
   watch: {
@@ -151,6 +161,12 @@ export default {
     inputUsername(newVal) {
       this.username = newVal;
     },
+    inputLanguage(newVal) {
+      this.language = newVal;
+    },
+    inputDifficulty(newVal) {
+      this.difficulty = newVal.charAt(0).toUpperCase() + newVal.slice(1);
+    },
   },
   methods: {
     coverWord() {
@@ -162,6 +178,8 @@ export default {
     },
 
     checkLetter() {
+      this.letter = this.letter.toLowerCase();
+
       if (!this.timeStart) {
         this.timeStart = true;
         this.startTimer();
@@ -193,17 +211,18 @@ export default {
 
     checkWin() {
       if (this.word === this.coveredWord.join("")) {
+        this.stopGame = true;
+        this.isWin = true;
         this.stopTimer();
         this.getScores();
         console.log("is win.");
-        this.stopGame = true;
-        this.isWin = true;
       } else if (this.attempts == 0) {
+        this.stopGame = true;
+        this.isWin = false;
         this.stopTimer();
         this.getScores();
         console.log("is lose.");
-        this.stopGame = true;
-        this.isWin = false;
+
         for (let i = 0; i < this.word.length; i++) {
           this.coveredWord[i] = this.word[i];
         }
@@ -214,12 +233,21 @@ export default {
       let requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      };
+
+      if (this.isWin) {
+        requestOptions.body = JSON.stringify({
           user: this.username,
           word: this.word,
           time: this.minutes * 60000 + this.seconds * 1000 + this.milliseconds,
-        }),
-      };
+        });
+      } else {
+        requestOptions.body = JSON.stringify({
+          user: "",
+          word: this.word,
+          time: 0,
+        });
+      }
 
       fetch("http://localhost:3000/score", requestOptions)
         .then((response) => response.json())

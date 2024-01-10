@@ -3,13 +3,15 @@
     <MenuApp
       class="center-card"
       v-show="menuActive"
-      @wordReceivedAndUsername="updateWordAndUsername"
+      @gameParams="updateGameParams"
     />
     <GameApp
       class="center-card"
       v-show="!menuActive"
       :inputWord="myWord"
       :inputUsername="myUsername"
+      :inputLanguage="lang"
+      :inputDifficulty="difficulty"
       @isEnd="gameEnd"
     />
   </div>
@@ -29,12 +31,17 @@ export default {
       myWord: "",
       myUsername: "s",
       menuActive: true,
+      lang: "",
+      difficulty: "",
     };
   },
   methods: {
-    async updateWordAndUsername(newWord, newUsername) {
+    async updateGameParams(newWord, newUsername, language, difficulty) {
+      console.log(newUsername, language);
       this.myWord = newWord;
       this.myUsername = newUsername;
+      this.lang = language;
+      this.difficulty = difficulty;
       this.menuActive = false;
     },
 
