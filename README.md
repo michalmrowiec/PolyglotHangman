@@ -2,9 +2,9 @@
 
 ## Purpose of the project
 
-This app was created as a study project.
+This app was created as a university project.
 
-Polyglot Hangman is a word game in which the player guesses words in different languages at various levels of difficulty. The player can choose the language they want to play in and then guess the word within a limited number of attempts. After guessing the word, the player can compare their time with other players on the leaderboard.
+Polyglot Hangman is a word game in which the player guesses words in different languages at various levels of difficulty. The player can choose the language and level of difficulty they want to play in and then guess the word within a limited number of attempts. After guessing the word, the player can compare their time with other players on the leaderboard.
 
 # Game
 
@@ -17,13 +17,16 @@ Here is the game menu:
 You can select game parameters:
 
 - Language:
-  ![Menu select languages](screenshots/menu-select-lang.png)
+
+![Menu select languages](screenshots/menu-select-lang.png)
 
 - Level of difficulty:
-  ![Menu select level of difficulty](screenshots/menu-select-level.png)
+
+![Menu select level of difficulty](screenshots/menu-select-level.png)
 
 - And enter your nickname:
-  ![Menu nickname](screenshots/menu-nickname.png)
+
+![Menu nickname](screenshots/menu-nickname.png)
 
 Next, you can press Enter or click the Play button.
 
@@ -35,11 +38,11 @@ At the bottom, there is an input field for letters and a check button (you can a
 
 ![Game 0](screenshots/game-0.png)
 
-Here are the next phases of the game. You can notice that the number of attempts left is less than before and the wrong letter is shown, but the correct letters are uncovered in the word..
+Here are the next phases of the game. You can notice that the number of attempts left is less than before and the wrong letters is shown, but the correct letters are uncovered in the word..
 
 ![Game 1](screenshots/game-1.png)
 
-If you enter a wrong letter, the counter of attempts changes color to yellow and then to red (but not in this example).
+If you enter an incorrect letter, the attempt counter decreases and turns yellow, then red (but not in this example).
 
 ![Game 2](screenshots/game-2.png)
 
