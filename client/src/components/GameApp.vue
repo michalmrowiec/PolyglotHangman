@@ -137,7 +137,7 @@ export default {
       stopGame: false,
       isWin: false,
       alert: "",
-      attempts: 10,
+      attempts: 0,
       timeStart: false,
       milliseconds: 0,
       seconds: 0,
@@ -269,7 +269,7 @@ export default {
           this.minutes++;
           this.seconds = 0;
         }
-      }, 1);
+      }, 10);
     },
     stopTimer() {
       clearInterval(this.intervalId);
